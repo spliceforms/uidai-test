@@ -12,6 +12,7 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -130,14 +131,21 @@ public class AuthClient {
   private static void setSKey(Node authNode, String pidTs, byte[] sessionKey) throws Exception {
     X509Certificate uidaiCertificate = readCertificate(UIDAI_STAGING_ENCRYPTION_CERTIFICATE);
 
+    System.out.println("Skey: PSource " + pidTs);
+
     Cipher pkCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-    var pSrc = new PSource.PSpecified(pidTs.getBytes());
+    var pSrc = new PSource.PSpecified(pidTs.getBytes());    
     var spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, pSrc);
     pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey(), spec);
-    byte[] entrypedSessionKey = pkCipher.doFinal(sessionKey);
-    Node SKeyNode = ((Element) authNode).getElementsByTagName("Skey").item(0);
-    SKeyNode.setTextContent(new String(Base64.getEncoder().encode(entrypedSessionKey)));
 
+    byte[] encryptedSessionKey = pkCipher.doFinal(sessionKey);
+
+    // the encrypted session key is set in the SKey element
+    Node SKeyNode = ((Element) authNode).getElementsByTagName("Skey").item(0);
+    SKeyNode.setTextContent(new String(Base64.getEncoder().encode(encryptedSessionKey)));
+
+    // the certificate identifier is set in the ci attribute of the SKey element
+    // error 501 if the ci is not set
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
     df.setTimeZone(TimeZone.getTimeZone("GMT"));
     String ci = df.format(uidaiCertificate.getNotAfter());
