@@ -12,7 +12,6 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.CertificateFactory;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -97,8 +96,7 @@ public class AuthClient {
 
     // set the SKey, Hmac and Data in the Auth XML
     Node authNode = createAuthNode();
-    setSKey(authNode, NOW, sessionKey);
-    //setSKey(authNode, sessionKey);
+    setSKey(authNode, NOW, sessionKey);    
     setHmac(authNode, pidNode, sessionKey);
     setData(authNode, pidNode, sessionKey);
 
