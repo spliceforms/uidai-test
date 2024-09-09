@@ -97,6 +97,7 @@ public class AuthClient {
     // set the SKey, Hmac and Data in the Auth XML
     Node authNode = createAuthNode();
     setSKey(authNode, NOW, sessionKey);
+    //setSKey(authNode, sessionKey);
     setHmac(authNode, pidNode, sessionKey);
     setData(authNode, pidNode, sessionKey);
 
@@ -124,6 +125,7 @@ public class AuthClient {
 
   /*
    * Sets the SKey Element in the Auth XML
+   * This is as per email from UIDAI dated 25th August 2024
    */
   private static void setSKey(Node authNode, String pidTs, byte[] sessionKey) throws Exception {
     X509Certificate uidaiCertificate = readCertificate(UIDAI_STAGING_ENCRYPTION_CERTIFICATE);
@@ -133,7 +135,7 @@ public class AuthClient {
     var spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, pSrc);
     pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey(), spec);
     byte[] entrypedSessionKey = pkCipher.doFinal(sessionKey);
-    Node SKeyNode = ((Element) authNode).getElementsByTagName("SKey").item(0);
+    Node SKeyNode = ((Element) authNode).getElementsByTagName("Skey").item(0);
     SKeyNode.setTextContent(new String(Base64.getEncoder().encode(entrypedSessionKey)));
 
     SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
@@ -312,10 +314,10 @@ public class AuthClient {
 
   /** The Auth XML with OTP */
   private static String AUTH_XML = """
-      <Auth ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" rc="Y" sa="public" tid="" txn="TX001" uid="999941057058" ver="2.5">
-        <Uses bio="n" bt="n" otp="n" pa="n" pfa="n" pi="y" pin="n"/>
-        <Device dc="" dpId="" mc="" mi="" rdsId="" rdsVer=""/>
-        <SKey ci=""/>
+      <Auth uid="999941057058" rc="Y" tid="" ac="public" sa="" ver="2.5" txn="TX001" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U">
+        <Uses pi="y" pa="n" pfa="n" bio="n" bt="n" pin="n" otp="y"/>
+        <Device rdsId="" rdsVer="" dpId="" dc="" mi="" mc=""/>
+        <Skey ci=""/>
         <Hmac/>
         <Data type="X"/>
       </Auth>
@@ -327,6 +329,7 @@ public class AuthClient {
         <Demo>
           <Pi ms="E" mv="100" name="Shivshankar Choudhury"/>
         </Demo>
+        <Pv otp="123456" pin="" />
       </Pid>
       """;
 
