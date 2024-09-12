@@ -1,4 +1,3 @@
 *.class
 .DS_Store
 public.p12
-*.jar

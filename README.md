@@ -4,6 +4,7 @@ This repository has the following java files:
 
 1. OtpClient.java : This has the code to send a OTP request to UIDAI
 2. AuthClient.java : This has the code to send a Auth request to UIDAI
+3. AuthClientBC.java : This has the code to send a Auth request to UIDAI (using BouncyCastle)
 
 There is no maven project, and the files are independent of each other (and self conatained). 
 
@@ -12,26 +13,51 @@ There are no external libraries, and the files compile with java 21
 The test data (UID, AUA Key, ASA Key) is hard-wired in the individual files - it is picked up from the UIDAI test site.
 
 
+## OtpClient
 To compile 
-```
-javac AuthClient.java
-```
-or
 ```
 javac OtpClient.java
 ```
-
 
 To run
 ```
 java OtpClient public.p12 publicauaforstagingservices
 ```
-or
+
+## AuthClient
+To compile 
+```
+javac AuthClient.java
+```
+
+To run
 ```
 java AuthClient public.p12 publicauaforstagingservices
 ```
 
+## AuthClientBC
+To compile 
+```
+javac -cp bcprov-jdk18on-1.78.1.jar AuthClientBC.java
+```
 
-1. public.p12 is the file obtained from UIDAI itself (it is no longer publically avialable)
-2. publicauaforstagingservices is the alias of the private key in the p12 file
-3. the password of the p12 file is 'public'
+To run
+```
+java -cp bcprov-jdk18on-1.78.1.jar AuthClientBC.java public.p12 publicauaforstagingservices
+```
+
+
+### What you need to run
+
+1. You need the public.p12 file to run (this is not committed to the repository) - you should write to authsupport@uidai.net.in to get the file.
+    * The file we received from UIDAI was called public.p12.
+    * In the commands above, you must replace public.p12 with the file you receive. 
+
+
+2. You need the alias (you can find that out from the public.p12 file itself by running keytool) 
+    * publicauaforstagingservices is the alias of the private key in the p12 file that we received
+
+
+3. The password of the p12 file & the private key. 
+    * The file we received had the password public
+    * If the password is different for you, change it using keytool. (The password is hardwired in the code).
