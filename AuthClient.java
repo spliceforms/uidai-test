@@ -156,9 +156,9 @@ public class AuthClient {
    */
   private static void setHmac(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {
     byte[] pidBytes = nodeToString(pidNode).getBytes();
+
     MessageDigest digest;
     digest = MessageDigest.getInstance("SHA-256");
-    digest.reset();
     byte[] hash = digest.digest(pidBytes);
 
     Key key = new SecretKeySpec(sessionKey, "AES");
@@ -193,10 +193,9 @@ public class AuthClient {
     byte[] ciphertext = cipher.doFinal(pidBytes);
 
     // Combine: ciphertext + AAD + full timestamp
-    ByteBuffer finalData = ByteBuffer.allocate(ciphertext.length + aad.length + pidTs.getBytes().length);
-    finalData.put(ciphertext);
-    finalData.put(aad);
+    ByteBuffer finalData = ByteBuffer.allocate(ciphertext.length + pidTs.getBytes().length);
     finalData.put(pidTs.getBytes());
+    finalData.put(ciphertext);
 
     Node dataNode = ((Element) authNode).getElementsByTagName("Data").item(0);
     dataNode.setTextContent(new String(Base64.getEncoder().encode(finalData.array())));
