@@ -20,10 +20,16 @@ To compile
 javac OtpClient.java
 ```
 
-To run
+To run with the hardwired UID (999941057058)
 ```
 java OtpClient public.p12 publicauaforstagingservices
 ```
+
+To run with a different UID (eg; 999933119405)
+```
+java OtpClient public.p12 publicauaforstagingservices 999933119405
+```
+
 
 ## AuthClient
 To compile 

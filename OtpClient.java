@@ -54,6 +54,7 @@ public class OtpClient {
   public static void main(String[] args) throws Exception {
     final KeyStore keyStore;
     String alias;
+    String uid = "999941057058";
 
     // read the p12 file that has the private key for AUA
     if (args.length < 2) {
@@ -66,11 +67,17 @@ public class OtpClient {
       alias = args[1];
     }
 
+    // optionally a UID can be passsed
+    if (args.length == 3) {
+      uid = args[2];
+    } 
+    System.out.println("Using UID: " + uid);
+
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     final String NOW = now.format(formatter);
 
-    final Node otpNode = createOtpNode(NOW);
+    final Node otpNode = createOtpNode(NOW, uid);
     addSignature(otpNode, keyStore, alias);
 
     HttpClient client = createHttpClient();
@@ -167,7 +174,7 @@ public class OtpClient {
     }
   }
 
-  private static Node createOtpNode(String ts) throws Exception {
+  private static Node createOtpNode(String ts, String uid) throws Exception {
     // Create a DocumentBuilder
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
@@ -177,6 +184,7 @@ public class OtpClient {
 
     Node otpNode = doc.getElementsByTagName("Otp").item(0);
     otpNode.getAttributes().getNamedItem("ts").setTextContent(ts);
+    otpNode.getAttributes().getNamedItem("uid").setTextContent(uid);
 
     return otpNode;
   }
@@ -196,7 +204,7 @@ public class OtpClient {
 
   /** The OTP XML */
   private static String OTP_XML = """
-      <Otp ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" sa="public" ts="" txn="TX001" type="A" uid="999941057058" ver="2.5">
+      <Otp ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" sa="public" ts="" txn="TX001" type="A" uid="999945411266" ver="2.5">
         <Opts ch="00"/>
       </Otp>
       """;
