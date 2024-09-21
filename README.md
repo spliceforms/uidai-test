@@ -39,12 +39,12 @@ javac AuthClient.java
 
 To run with the hardwired UID (999941057058)
 ```
-java AuthClient public.p12 publicauaforstagingservices
+java AuthClient public.p12 publicauaforstagingservices 123456
 ```
 
 To run with a different UID (eg; 999933119405)
 ```
-java AuthClient public.p12 publicauaforstagingservices 999933119405
+java AuthClient public.p12 publicauaforstagingservices 999933119405 123456
 ```
 
 ## AuthClientBC

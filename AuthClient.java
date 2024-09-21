@@ -68,23 +68,26 @@ public class AuthClient {
     final KeyStore keyStore;
     String alias;
     String uid = "999941057058";
+    String otp = "123456";
 
     // read the p12 file that has the private key for AUA
-    if (args.length < 2) {
-      System.out.println("Please provide the p12 file & alias, ensure key-password and file password is 'public");
+    if (args.length < 3) {
+      System.out.println("Please provide the p12 file & alias, ensure key-password and file password is 'public, and the OTP");
       return;
     } else {
       System.out.println("Using p12 file: " + args[0] + ", and alias " + args[1]
           + " assuming key-password and file password is 'public'");
       keyStore = createKeyStore(args[0], P12_PASSWORD);
       alias = args[1];
+      otp = args[2];
     }
 
     // optionally a UID can be passsed
-    if (args.length == 3) {
-      uid = args[2];
+    if (args.length == 4) {
+      uid = args[3];
     } 
     System.out.println("Using UID: " + uid);
+    System.out.println("Using OTP: " + otp);
 
     // every request is with a new timestamp 
     LocalDateTime now = LocalDateTime.now();
@@ -97,7 +100,7 @@ public class AuthClient {
     final byte[] sessionKey = kgen.generateKey().getEncoded();
 
     // set the timestamp in the PID XML
-    Node pidNode = createPidNode(NOW);
+    Node pidNode = createPidNode(NOW, otp);
     System.out.println("PID XML: \n" + nodeToString(pidNode));
 
     // set the SKey, Hmac and Data in the Auth XML
@@ -261,7 +264,7 @@ public class AuthClient {
    * Creates a new PID - with the timestamp of now(), all other data is kept as in
    * the template
    */
-  private static Node createPidNode(String ts) throws Exception {
+  private static Node createPidNode(String ts, String otp) throws Exception {
     // Create a DocumentBuilder
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
@@ -271,6 +274,9 @@ public class AuthClient {
 
     Node pidNode = doc.getElementsByTagName("Pid").item(0);
     pidNode.getAttributes().getNamedItem("ts").setTextContent(ts);
+
+    Node pvNode = doc.getElementsByTagName("Pv").item(0);
+    pvNode.getAttributes().getNamedItem("otp").setTextContent(otp);
 
     return pidNode;
   }
