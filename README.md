@@ -31,9 +31,14 @@ To compile
 javac AuthClient.java
 ```
 
-To run
+To run with the hardwired UID (999941057058)
 ```
 java AuthClient public.p12 publicauaforstagingservices
+```
+
+To run with a different UID (eg; 999933119405)
+```
+java AuthClient public.p12 publicauaforstagingservices 999933119405
 ```
 
 ## AuthClientBC

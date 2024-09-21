@@ -52,7 +52,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -68,6 +67,7 @@ public class AuthClient {
   public static void main(String[] args) throws Exception {
     final KeyStore keyStore;
     String alias;
+    String uid = "999941057058";
 
     // read the p12 file that has the private key for AUA
     if (args.length < 2) {
@@ -79,6 +79,12 @@ public class AuthClient {
       keyStore = createKeyStore(args[0], P12_PASSWORD);
       alias = args[1];
     }
+
+    // optionally a UID can be passsed
+    if (args.length == 3) {
+      uid = args[2];
+    } 
+    System.out.println("Using UID: " + uid);
 
     // every request is with a new timestamp 
     LocalDateTime now = LocalDateTime.now();
@@ -95,7 +101,7 @@ public class AuthClient {
     System.out.println("PID XML: \n" + nodeToString(pidNode));
 
     // set the SKey, Hmac and Data in the Auth XML
-    Node authNode = createAuthNode();
+    Node authNode = createAuthNode(uid);  
     setSKey(authNode, NOW, sessionKey);    
     setHmac(authNode, pidNode, sessionKey);
     setData(authNode, pidNode, sessionKey);
@@ -155,28 +161,42 @@ public class AuthClient {
    * Sets the Hmac Element in the Auth XML
    */
   private static void setHmac(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {
+    String pidTs = pidNode.getAttributes().getNamedItem("ts").getTextContent();
     byte[] pidBytes = nodeToString(pidNode).getBytes();
 
+    // generate the SHA-256 hash of the PID block
     MessageDigest digest;
     digest = MessageDigest.getInstance("SHA-256");
+    digest.reset();
     byte[] hash = digest.digest(pidBytes);
-
-    Key key = new SecretKeySpec(sessionKey, "AES");
-    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-    cipher.init(Cipher.ENCRYPT_MODE, key);
-    byte[] encryptedHash = cipher.doFinal(hash);
+    
+    // encrypt the hash with the sessionKey
+    byte[] ciphertext = encrypt(hash, pidTs, sessionKey); 
 
     Node hmacNode = ((Element) authNode).getElementsByTagName("Hmac").item(0);
-    hmacNode.setTextContent(new String(Base64.getEncoder().encode(encryptedHash)));
+    hmacNode.setTextContent(new String(Base64.getEncoder().encode(ciphertext)));
   }
 
   /*
    * Sets the Data Element in the Auth XML
    */
-  private static void setData(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {
+  private static void setData(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {    
     String pidTs = pidNode.getAttributes().getNamedItem("ts").getTextContent();
     byte[] pidBytes = nodeToString(pidNode).getBytes();
 
+    // encrypt the pid XML with the sessionKey
+    byte[] ciphertext = encrypt(pidBytes, pidTs, sessionKey);
+
+    // Combine: ciphertext + AAD + full timestamp
+    ByteBuffer finalData = ByteBuffer.allocate(ciphertext.length + pidTs.getBytes().length);
+    finalData.put(pidTs.getBytes());
+    finalData.put(ciphertext);
+
+    Node dataNode = ((Element) authNode).getElementsByTagName("Data").item(0);
+    dataNode.setTextContent(new String(Base64.getEncoder().encode(finalData.array())));
+  }
+
+  private static byte[] encrypt(byte[] data, String pidTs, byte[] sessionKey) throws Exception {
     // Use last 12 bytes of ts as IV/nonce
     byte[] iv = pidTs.substring(pidTs.length() - 12).getBytes();
 
@@ -190,15 +210,7 @@ public class AuthClient {
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
     cipher.updateAAD(aad);
 
-    byte[] ciphertext = cipher.doFinal(pidBytes);
-
-    // Combine: ciphertext + AAD + full timestamp
-    ByteBuffer finalData = ByteBuffer.allocate(ciphertext.length + pidTs.getBytes().length);
-    finalData.put(pidTs.getBytes());
-    finalData.put(ciphertext);
-
-    Node dataNode = ((Element) authNode).getElementsByTagName("Data").item(0);
-    dataNode.setTextContent(new String(Base64.getEncoder().encode(finalData.array())));
+    return cipher.doFinal(data);
   }
 
   /*
@@ -231,7 +243,7 @@ public class AuthClient {
     signature.sign(dsc);
   }
 
-  private static Node createAuthNode() throws Exception {
+  private static Node createAuthNode(String uid) throws Exception {
     // Create a DocumentBuilder
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
@@ -240,6 +252,7 @@ public class AuthClient {
     Document doc = builder.parse(new ByteArrayInputStream(AUTH_XML.getBytes()));
 
     Node authNode = doc.getElementsByTagName("Auth").item(0);
+    authNode.getAttributes().getNamedItem("uid").setTextContent(uid);
 
     return authNode;
   }
@@ -319,8 +332,8 @@ public class AuthClient {
 
   /** The Auth XML with OTP */
   private static String AUTH_XML = """
-      <Auth uid="999941057058" rc="Y" tid="" ac="public" sa="" ver="2.5" txn="TX001" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U">
-        <Uses pi="y" pa="n" pfa="n" bio="n" bt="n" pin="n" otp="y"/>
+      <Auth uid="" rc="Y" tid="" ac="public" sa="" ver="2.5" txn="TX001" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U">
+        <Uses pi="n" pa="n" pfa="n" bio="n" bt="" pin="n" otp="y"/>
         <Device rdsId="" rdsVer="" dpId="" dc="" mi="" mc=""/>
         <Skey ci=""/>
         <Hmac/>
@@ -331,10 +344,8 @@ public class AuthClient {
   /** The PID XML (before encryption) */
   private static String PID_XML = """
       <Pid ts="" ver="2.0" wadh="">
-        <Demo>
-          <Pi ms="E" mv="100" name="Shivshankar Choudhury"/>
-        </Demo>
-        <Pv otp="123456" pin="" />
+        <Demo lang="" />        
+        <Pv otp="123456" />
       </Pid>
       """;
 
