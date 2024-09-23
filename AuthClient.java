@@ -72,7 +72,8 @@ public class AuthClient {
 
     // read the p12 file that has the private key for AUA
     if (args.length < 3) {
-      System.out.println("Please provide the p12 file & alias, ensure key-password and file password is 'public, and the OTP");
+      System.out.println(
+          "Please provide the p12 file & alias, ensure key-password and file password is 'public, and the OTP");
       return;
     } else {
       System.out.println("Using p12 file: " + args[0] + ", and alias " + args[1]
@@ -85,11 +86,11 @@ public class AuthClient {
     // optionally a UID can be passsed
     if (args.length == 4) {
       uid = args[3];
-    } 
+    }
     System.out.println("Using UID: " + uid);
     System.out.println("Using OTP: " + otp);
 
-    // every request is with a new timestamp 
+    // every request is with a new timestamp
     LocalDateTime now = LocalDateTime.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     final String NOW = now.format(formatter);
@@ -104,22 +105,36 @@ public class AuthClient {
     System.out.println("PID XML: \n" + nodeToString(pidNode));
 
     // set the SKey, Hmac and Data in the Auth XML
-    Node authNode = createAuthNode(uid);  
-    setSKey(authNode, NOW, sessionKey);    
+    Node authNode = createAuthNode(uid);
+    setSKey(authNode, NOW, sessionKey);
     setHmac(authNode, pidNode, sessionKey);
     setData(authNode, pidNode, sessionKey);
 
     // add the signature to the Auth XML
     addSignature(authNode, keyStore, alias);
 
+    String path = "authserver";
+    String payload = nodeToString(authNode);
+    // optionally kyc can be triggered
+    if (args.length == 5 && args[4].equals("kyc")) {
+      System.out.println("Doing KYC instead of Auth");
+      path = "uidkyc/kyc";
+
+      Node kycNode = createKycNode();
+      setRad(kycNode, authNode);
+      payload = nodeToString(kycNode);
+    }
+
+
     HttpClient client = createHttpClient();
 
     HttpRequest request = HttpRequest.newBuilder()
         .uri(URI.create(
-            "https://developer.uidai.gov.in/authserver/2.5/public/9/9/MHyryrzsW4_lgSJB1jQ-zQhd022ODevHJ6SeJJIR2IMi5KwN91Wxgps"))
+            "https://developer.uidai.gov.in/" + path
+                + "/2.5/public/9/9/MHyryrzsW4_lgSJB1jQ-zQhd022ODevHJ6SeJJIR2IMi5KwN91Wxgps"))
         .header("Content-Type", "application/xml")
         .timeout(Duration.ofSeconds(60))
-        .POST(HttpRequest.BodyPublishers.ofString(nodeToString(authNode)))
+        .POST(HttpRequest.BodyPublishers.ofString(payload))
         .build();
 
     HttpClientLogger.logRequestBody(request);
@@ -141,7 +156,7 @@ public class AuthClient {
     System.out.println("Skey: PSource " + pidTs);
 
     Cipher pkCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-    var pSrc = new PSource.PSpecified(pidTs.getBytes());    
+    var pSrc = new PSource.PSpecified(pidTs.getBytes());
     var spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, pSrc);
     pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey(), spec);
 
@@ -172,9 +187,9 @@ public class AuthClient {
     digest = MessageDigest.getInstance("SHA-256");
     digest.reset();
     byte[] hash = digest.digest(pidBytes);
-    
+
     // encrypt the hash with the sessionKey
-    byte[] ciphertext = encrypt(hash, pidTs, sessionKey); 
+    byte[] ciphertext = encrypt(hash, pidTs, sessionKey);
 
     Node hmacNode = ((Element) authNode).getElementsByTagName("Hmac").item(0);
     hmacNode.setTextContent(new String(Base64.getEncoder().encode(ciphertext)));
@@ -183,7 +198,7 @@ public class AuthClient {
   /*
    * Sets the Data Element in the Auth XML
    */
-  private static void setData(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {    
+  private static void setData(Node authNode, Node pidNode, byte[] sessionKey) throws Exception {
     String pidTs = pidNode.getAttributes().getNamedItem("ts").getTextContent();
     byte[] pidBytes = nodeToString(pidNode).getBytes();
 
@@ -198,6 +213,35 @@ public class AuthClient {
     Node dataNode = ((Element) authNode).getElementsByTagName("Data").item(0);
     dataNode.setTextContent(new String(Base64.getEncoder().encode(finalData.array())));
   }
+
+  private static Node createKycNode() throws Exception {
+    // Create a DocumentBuilder
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+
+    // Parse the XML string
+    Document doc = builder.parse(new ByteArrayInputStream(KYC_XML.getBytes()));
+
+    Node kycNode = doc.getElementsByTagName("Kyc").item(0);
+
+    return kycNode;
+  }
+
+  private static void setRad(Node kycNode, Node authNode) throws Exception {
+    // Read the Auth XML
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+
+    Document doc = builder.parse(new ByteArrayInputStream(AUTH_XML.getBytes()));
+
+    String authXml = nodeToString(authNode);
+
+    // AuthXml is base64 encoded before setting it in the Rad Element
+    String authXmlBase64 = Base64.getEncoder().encodeToString(authXml.getBytes());
+
+    Node radNode = ((Element) kycNode).getElementsByTagName("Rad").item(0);
+    radNode.setTextContent(authXmlBase64);
+  }  
 
   private static byte[] encrypt(byte[] data, String pidTs, byte[] sessionKey) throws Exception {
     // Use last 12 bytes of ts as IV/nonce
@@ -338,7 +382,7 @@ public class AuthClient {
 
   /** The Auth XML with OTP */
   private static String AUTH_XML = """
-      <Auth uid="" rc="Y" tid="" ac="public" sa="" ver="2.5" txn="TX001" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U">
+      <Auth uid="" rc="Y" tid="" ac="public" sa="" ver="2.5" txn="UKC:001" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U">
         <Uses pi="n" pa="n" pfa="n" bio="n" bt="" pin="n" otp="y"/>
         <Device rdsId="" rdsVer="" dpId="" dc="" mi="" mc=""/>
         <Skey ci=""/>
@@ -350,10 +394,17 @@ public class AuthClient {
   /** The PID XML (before encryption) */
   private static String PID_XML = """
       <Pid ts="" ver="2.0" wadh="">
-        <Demo lang="" />        
+        <Demo lang="" />
         <Pv otp="123456" />
       </Pid>
       """;
+
+  /** KCY XML */
+  private static String KYC_XML = """
+      <Kyc ver="2.5" ra="O" rc="Y" lr="N" de="N" pfr="N">
+        <Rad/>
+      </Kyc>
+        """;
 
   /*
    * The certificate for https://developer.uidai.gov.in

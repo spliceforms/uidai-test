@@ -204,7 +204,7 @@ public class OtpClient {
 
   /** The OTP XML */
   private static String OTP_XML = """
-      <Otp ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" sa="public" ts="" txn="TX001" type="A" uid="999945411266" ver="2.5">
+      <Otp ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" sa="public" ts="" txn="UKC:001" type="A" uid="999945411266" ver="2.5">
         <Opts ch="00"/>
       </Otp>
       """;

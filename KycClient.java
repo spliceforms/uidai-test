@@ -144,33 +144,33 @@ public class KycClient {
 
   /** The PID XML (before encryption) */
   private static String AUTH_XML = """
-    <Auth ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" rc="Y" sa="" tid="" txn="TX001" uid="999941057058" ver="2.5">
-      <Uses bio="n" bt="n" otp="y" pa="n" pfa="n" pi="y" pin="n"/>
-      <Device dc="" dpId="" mc="" mi="" rdsId="" rdsVer=""/>
-      <Skey ci="20250825">XUEqnBMtGzerj7CTonYYJlQ++7Gvpbr4Sa9b+12ok+WCnACC6kNBxX1kJuRFyB6Mg1Ij0UEftqCz/4Y5nU9CRVhZsSvbWaZbkdDV0TizPOdEghTSqd9xyf2xBduVVNb9SyQcm1iyXHbwN3soZ3d3h8q5VM7lh/+SlHUjsUmLe9lGD0N2PfRd17TmHNx/OgiJOF29cvXREtznSxelaTnPJXg+hsy9TB8Ik1ige0aZcpZcBPXzdr98AfPEik71nVg7vuGBveaM9DiTVEbaA6Oy3WCzhIu2DsnzSXDdaaJdQ5rj8YOlypffkJ6zzzzJefcMxQwV/QApLQSeJnOV8INTBQ==</Skey>
-      <Hmac>T1qgVG5VGFFUyikesyVNLbuq1kzwmMYdtNv96HIq4yDpvd7Q1D6iZXZWw2B9KMzc</Hmac>
-      <Data type="X">BcGRflYyor/8yv8/IoDm6aI61sKYhNPEO+QbSfX+1xi2ZvkFUiMEwSRGWe39txtjd7chFMOz43Gf29aGi2frnH4c/EPUKNK2ZxfdmmNJNlthtgDzv7Ir9y0czMBi8+2sTCkfmxvcJXEN71um3rEEHqEp1V5LgmlBKIC/SfxRYLoCZw16o/rtCoCVVHW0C1A+eS3h6YkaaShWvJ1h17VqwQxT8Te6zxdj/1EWbNw0LTA5LTEzVDA4OjQwOjA5MjAyNC0wOS0xM1QwODo0MDowOQ==</Data>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>OYoqBHveTasbMofG+R0f570JWyvdTryYel3CR4UOggo=</DigestValue></Reference></SignedInfo><SignatureValue>Y6qtwmwda/XTsxi/YwY7ePekK0DtbWs9wNH3rH+TE/ItIADfTs7pRSI6oj+yH21M7dphS06reN4k&#13;
-    DLer9vGPoH3TFK112G7lbmiyEI9h70tAD7oaEx0dzCEKJ41TtXDgg/jX/o3dMApCE741SbGGdoLD&#13;
-    B1NsZLrfglio94X1g3Oovl3rVf5yodvHAjuqnKWY/Sp8FlW0A8s6t6X4qDVyMfCZoVjSehEZbRkC&#13;
-    m0BsblqOZc5NFAdaaHV/l3L4z8XmdD9THcOh8J3s7VzNf3Wt2wCFsFhK9LvFO3sh+KHF59nR7g/W&#13;
-    qsihPVjnwBrIWAJH5f/l/GoVAwkKbUiGZ0eoHg==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=Public AUA for Staging Services,OU=Staging Services,O=Public AUA,L=Bangalore,ST=KA,C=IN</X509SubjectName><X509Certificate>MIIDuTCCAqGgAwIBAgIHBFednVbC3DANBgkqhkiG9w0BAQUFADCBjTELMAkGA1UEBhMCSU4xCzAJ&#13;
-    BgNVBAgTAktBMRIwEAYDVQQHEwlCYW5nYWxvcmUxEzARBgNVBAoTClB1YmxpYyBBVUExGTAXBgNV&#13;
-    BAsTEFN0YWdpbmcgU2VydmljZXMxLTArBgNVBAMTJFJvb3QgUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
-    ZyBTZXJ2aWNlczAeFw0yNDA0MjkxMzI3MDZaFw0yODA0MjkxMzI3MDZaMIGIMQswCQYDVQQGEwJJ&#13;
-    TjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMKUHVibGljIEFVQTEZ&#13;
-    MBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEoMCYGA1UEAxMfUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
-    ZyBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALiYzM/HKKAWW+qZD7Ex&#13;
-    GEI4XFb+dT5bZElYBickVN5rj6g0p7psJDr6Ls//6v7f1SThdEDvwx0vavN6tzW+hdlBGmN7T6Nz&#13;
-    zqwkL5P6PJHwRY6on4n9edLB+Izn2a/qdlRB/gmV5cvH2eL2GqOsjhrGizj0Q+wsmNtnYwjKbtIN&#13;
-    LYSO7pUmePkSmkBk5eG8HjwmFcVmqkOoaCAEwz91iHsXLrSuh4CdmM8bWLMO5WNsdceLdml/6RLf&#13;
-    S4c0MwL1WgUU95LJuikeKz95p9HCq7GK0uZk2UhjtmyxoE9ccuidvcDHX9Xlb3uk1bScs4xEarwA&#13;
-    llT+vRI9BezfNwyk7s8CAwEAAaMhMB8wHQYDVR0OBBYEFD2MCJqrkkUJz4tnNLXn7Cl2hSAyMA0G&#13;
-    CSqGSIb3DQEBBQUAA4IBAQB7BlVIyhCf2A5IuN6PHtgBr7NOGYYFyQVwBoS9pmQaqTE1km5f2m+x&#13;
-    Fh7UD635NAXuUA0USXBYhN1NMgnE3q/Jhyfxq0Zx0Qq8WFQaBM8ka93r833t+jvLUrIlHlq5K4V7&#13;
-    UNyOnks+lyPGp2WwG1cI1NUgq5HInwy2sDJIFAAbTWiVXxzSnK0mA9jbATx8kcoudqbtkeYIKF3R&#13;
-    F1ngvb35LPSo5SQDnXbFB22pVfSSv2Lo4viNVy924/z176uz21LU/FspnfqVKR4Cprl2eBslcNnb&#13;
-    Hv2CSfadPAdw4ncASgZLDaZlfywzZ20+zGF7IDN5opx+sBPhhv64hkmupO1Y</X509Certificate></X509Data></KeyInfo></Signature></Auth>
+<Auth ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" rc="Y" sa="" tid="" txn="UKC:001" uid="999945411266" ver="2.5">
+  <Uses bio="n" bt="" otp="y" pa="n" pfa="n" pi="n" pin="n"/>
+  <Device dc="" dpId="" mc="" mi="" rdsId="" rdsVer=""/>
+  <Skey ci="20250825">ZUWiXbO274kWLhSmy84sI6tiedW6kuUV/GgvKbgHCyK96QOWiGyWaXb1MOkhfl0op9id9P1TGqXai1/fc9qNu9iY31LxlvnBIfPC/MT8JND4emhCa/FY8Cclh4ftPr5W9O+o7vlc4kJLqmdzUiQcVIOrGtxoe8gtOXuzbHT2BMFzwgaB7iuKPWs163QZwHTZgodoeqWsxT5ESZNSVEUqmR+LUt4e5l+B6qskznKjUJrdtL/mDFIPRpyyvqJm39B4mx/Sd51Tsgd3ntn1kvFJ8c2rd5HY1JV7Rdy2s66J79pSZPfdVLeRivuXQAuXj3mA2Miz0yiphVCSshuPR0HvrA==</Skey>
+  <Hmac>TAchTxqWq2W+nJ+x9K2OcJXOwkUy/3aj+ybThTjnRsPrb5/ZQEWFlBxZ7U2amOHu</Hmac>
+  <Data type="X">MjAyNC0wOS0yM1QxODoyOToxNjIY1ejytEmmc5Qz1Dg2Kr1QP5NbmDDxHkotKm0UXBVYLMSMjvjghpbqsgaMecBNmgHAWHJUGb31iijTe2klI3ye56bhEQ6sNsm334QT5oJ8YRuODeP4+Erqx4GGeB8tHcWaZjcbfnfAoI/fqVPR</Data>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>n6ZjZM10RJMHCxW1lO7PSfSFrRnkv6L8tpNmtlkLXgc=</DigestValue></Reference></SignedInfo><SignatureValue>a8EaD6EymUjxD5SX9XbM7zwvOoco5wPL0gUtaiIt/8wYu9NHpnMhhg1Q8TF50lefa6hC3yXUXqy4&#13;
+7fNuBqjeGO4ReBWHIIcecN9HD7WY7U+R6GC4lhsHkYpcU6ByDtU84d+GXcT2J0meJTOKVIFJUNsG&#13;
+VcEunb0qLN81aCRJo4bYqRWGTwrU5xD5X4truxBojlGAxzvYfdVmVsQ4swbQYk7D+7afalMzo49K&#13;
+Jg1+/ORnl0m6UBOTqbO5mbaft7YBiUYmBELWM3qrnWCqUQGhjY4Ib+mzsbU3NDRS+pGh5pDdbnAZ&#13;
+GLrHWzo7/haUcM8wlKZIbHWK1HE6WMxNKOCnFA==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=Public AUA for Staging Services,OU=Staging Services,O=Public AUA,L=Bangalore,ST=KA,C=IN</X509SubjectName><X509Certificate>MIIDuTCCAqGgAwIBAgIHBFednVbC3DANBgkqhkiG9w0BAQUFADCBjTELMAkGA1UEBhMCSU4xCzAJ&#13;
+BgNVBAgTAktBMRIwEAYDVQQHEwlCYW5nYWxvcmUxEzARBgNVBAoTClB1YmxpYyBBVUExGTAXBgNV&#13;
+BAsTEFN0YWdpbmcgU2VydmljZXMxLTArBgNVBAMTJFJvb3QgUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
+ZyBTZXJ2aWNlczAeFw0yNDA0MjkxMzI3MDZaFw0yODA0MjkxMzI3MDZaMIGIMQswCQYDVQQGEwJJ&#13;
+TjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMKUHVibGljIEFVQTEZ&#13;
+MBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEoMCYGA1UEAxMfUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
+ZyBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALiYzM/HKKAWW+qZD7Ex&#13;
+GEI4XFb+dT5bZElYBickVN5rj6g0p7psJDr6Ls//6v7f1SThdEDvwx0vavN6tzW+hdlBGmN7T6Nz&#13;
+zqwkL5P6PJHwRY6on4n9edLB+Izn2a/qdlRB/gmV5cvH2eL2GqOsjhrGizj0Q+wsmNtnYwjKbtIN&#13;
+LYSO7pUmePkSmkBk5eG8HjwmFcVmqkOoaCAEwz91iHsXLrSuh4CdmM8bWLMO5WNsdceLdml/6RLf&#13;
+S4c0MwL1WgUU95LJuikeKz95p9HCq7GK0uZk2UhjtmyxoE9ccuidvcDHX9Xlb3uk1bScs4xEarwA&#13;
+llT+vRI9BezfNwyk7s8CAwEAAaMhMB8wHQYDVR0OBBYEFD2MCJqrkkUJz4tnNLXn7Cl2hSAyMA0G&#13;
+CSqGSIb3DQEBBQUAA4IBAQB7BlVIyhCf2A5IuN6PHtgBr7NOGYYFyQVwBoS9pmQaqTE1km5f2m+x&#13;
+Fh7UD635NAXuUA0USXBYhN1NMgnE3q/Jhyfxq0Zx0Qq8WFQaBM8ka93r833t+jvLUrIlHlq5K4V7&#13;
+UNyOnks+lyPGp2WwG1cI1NUgq5HInwy2sDJIFAAbTWiVXxzSnK0mA9jbATx8kcoudqbtkeYIKF3R&#13;
+F1ngvb35LPSo5SQDnXbFB22pVfSSv2Lo4viNVy924/z176uz21LU/FspnfqVKR4Cprl2eBslcNnb&#13;
+Hv2CSfadPAdw4ncASgZLDaZlfywzZ20+zGF7IDN5opx+sBPhhv64hkmupO1Y</X509Certificate></X509Data></KeyInfo></Signature></Auth>
       """;
 
   /*

@@ -5,7 +5,6 @@ This repository has the following java files:
 1. OtpClient.java : This has the code to send a OTP request to UIDAI
 2. AuthClient.java : This has the code to send a Auth request to UIDAI
 3. AuthClientBC.java : This has the code to send a Auth request to UIDAI (using BouncyCastle)
-4. KycClient.java : This has the code to send a KYC request to UIDAI
 
 There is no maven project, and the files are independent of each other (and self conatained). 
 
@@ -44,7 +43,12 @@ java AuthClient public.p12 publicauaforstagingservices 123456
 
 To run with a different UID (eg; 999933119405)
 ```
-java AuthClient public.p12 publicauaforstagingservices 999933119405 123456
+java AuthClient public.p12 publicauaforstagingservices 123456 999933119405 
+```
+
+To send KYC instead of Auth with a different UID (eg; 999933119405)
+```
+java AuthClient public.p12 publicauaforstagingservices 123456 999933119405 kyc
 ```
 
 ## AuthClientBC
@@ -58,16 +62,6 @@ To run
 java -cp bcprov-jdk18on-1.78.1.jar AuthClientBC.java public.p12 publicauaforstagingservices
 ```
 
-## KycClient
-To compile 
-```
-javac KycClient.java
-```
-
-To run
-```
-java KycClient.java 
-```
 
 ### What you need to run
 
