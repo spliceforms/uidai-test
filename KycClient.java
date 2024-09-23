@@ -58,7 +58,6 @@ public class KycClient {
     System.out.println("Response Body: " + response.body());
   }
 
- 
   private static Node createKycNode() throws Exception {
     // Create a DocumentBuilder
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -102,7 +101,6 @@ public class KycClient {
     return writer.getBuffer().toString();
   }
 
-
   /*
    * HTTP Client with SSLContext that trusts https://developer.uidai.gov.in
    */
@@ -137,41 +135,41 @@ public class KycClient {
 
   /** The Auth XML with OTP */
   private static String KYC_XML = """
-    <Kyc ver="2.5" ra="O" rc="Y" lr="N" de="N" pfr="N">
-      <Rad/>
-    </Kyc>
-      """;
+      <Kyc ver="2.5" ra="O" rc="Y" lr="N" de="N" pfr="N">
+        <Rad/>
+      </Kyc>
+        """;
 
   /** The PID XML (before encryption) */
   private static String AUTH_XML = """
-    <Auth ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" rc="Y" sa="" tid="" txn="TX001" uid="999941057058" ver="2.5">
-      <Uses bio="n" bt="n" otp="y" pa="n" pfa="n" pi="y" pin="n"/>
-      <Device dc="" dpId="" mc="" mi="" rdsId="" rdsVer=""/>
-      <Skey ci="20250825">XUEqnBMtGzerj7CTonYYJlQ++7Gvpbr4Sa9b+12ok+WCnACC6kNBxX1kJuRFyB6Mg1Ij0UEftqCz/4Y5nU9CRVhZsSvbWaZbkdDV0TizPOdEghTSqd9xyf2xBduVVNb9SyQcm1iyXHbwN3soZ3d3h8q5VM7lh/+SlHUjsUmLe9lGD0N2PfRd17TmHNx/OgiJOF29cvXREtznSxelaTnPJXg+hsy9TB8Ik1ige0aZcpZcBPXzdr98AfPEik71nVg7vuGBveaM9DiTVEbaA6Oy3WCzhIu2DsnzSXDdaaJdQ5rj8YOlypffkJ6zzzzJefcMxQwV/QApLQSeJnOV8INTBQ==</Skey>
-      <Hmac>T1qgVG5VGFFUyikesyVNLbuq1kzwmMYdtNv96HIq4yDpvd7Q1D6iZXZWw2B9KMzc</Hmac>
-      <Data type="X">BcGRflYyor/8yv8/IoDm6aI61sKYhNPEO+QbSfX+1xi2ZvkFUiMEwSRGWe39txtjd7chFMOz43Gf29aGi2frnH4c/EPUKNK2ZxfdmmNJNlthtgDzv7Ir9y0czMBi8+2sTCkfmxvcJXEN71um3rEEHqEp1V5LgmlBKIC/SfxRYLoCZw16o/rtCoCVVHW0C1A+eS3h6YkaaShWvJ1h17VqwQxT8Te6zxdj/1EWbNw0LTA5LTEzVDA4OjQwOjA5MjAyNC0wOS0xM1QwODo0MDowOQ==</Data>
-    <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>OYoqBHveTasbMofG+R0f570JWyvdTryYel3CR4UOggo=</DigestValue></Reference></SignedInfo><SignatureValue>Y6qtwmwda/XTsxi/YwY7ePekK0DtbWs9wNH3rH+TE/ItIADfTs7pRSI6oj+yH21M7dphS06reN4k&#13;
-    DLer9vGPoH3TFK112G7lbmiyEI9h70tAD7oaEx0dzCEKJ41TtXDgg/jX/o3dMApCE741SbGGdoLD&#13;
-    B1NsZLrfglio94X1g3Oovl3rVf5yodvHAjuqnKWY/Sp8FlW0A8s6t6X4qDVyMfCZoVjSehEZbRkC&#13;
-    m0BsblqOZc5NFAdaaHV/l3L4z8XmdD9THcOh8J3s7VzNf3Wt2wCFsFhK9LvFO3sh+KHF59nR7g/W&#13;
-    qsihPVjnwBrIWAJH5f/l/GoVAwkKbUiGZ0eoHg==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=Public AUA for Staging Services,OU=Staging Services,O=Public AUA,L=Bangalore,ST=KA,C=IN</X509SubjectName><X509Certificate>MIIDuTCCAqGgAwIBAgIHBFednVbC3DANBgkqhkiG9w0BAQUFADCBjTELMAkGA1UEBhMCSU4xCzAJ&#13;
-    BgNVBAgTAktBMRIwEAYDVQQHEwlCYW5nYWxvcmUxEzARBgNVBAoTClB1YmxpYyBBVUExGTAXBgNV&#13;
-    BAsTEFN0YWdpbmcgU2VydmljZXMxLTArBgNVBAMTJFJvb3QgUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
-    ZyBTZXJ2aWNlczAeFw0yNDA0MjkxMzI3MDZaFw0yODA0MjkxMzI3MDZaMIGIMQswCQYDVQQGEwJJ&#13;
-    TjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMKUHVibGljIEFVQTEZ&#13;
-    MBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEoMCYGA1UEAxMfUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
-    ZyBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALiYzM/HKKAWW+qZD7Ex&#13;
-    GEI4XFb+dT5bZElYBickVN5rj6g0p7psJDr6Ls//6v7f1SThdEDvwx0vavN6tzW+hdlBGmN7T6Nz&#13;
-    zqwkL5P6PJHwRY6on4n9edLB+Izn2a/qdlRB/gmV5cvH2eL2GqOsjhrGizj0Q+wsmNtnYwjKbtIN&#13;
-    LYSO7pUmePkSmkBk5eG8HjwmFcVmqkOoaCAEwz91iHsXLrSuh4CdmM8bWLMO5WNsdceLdml/6RLf&#13;
-    S4c0MwL1WgUU95LJuikeKz95p9HCq7GK0uZk2UhjtmyxoE9ccuidvcDHX9Xlb3uk1bScs4xEarwA&#13;
-    llT+vRI9BezfNwyk7s8CAwEAAaMhMB8wHQYDVR0OBBYEFD2MCJqrkkUJz4tnNLXn7Cl2hSAyMA0G&#13;
-    CSqGSIb3DQEBBQUAA4IBAQB7BlVIyhCf2A5IuN6PHtgBr7NOGYYFyQVwBoS9pmQaqTE1km5f2m+x&#13;
-    Fh7UD635NAXuUA0USXBYhN1NMgnE3q/Jhyfxq0Zx0Qq8WFQaBM8ka93r833t+jvLUrIlHlq5K4V7&#13;
-    UNyOnks+lyPGp2WwG1cI1NUgq5HInwy2sDJIFAAbTWiVXxzSnK0mA9jbATx8kcoudqbtkeYIKF3R&#13;
-    F1ngvb35LPSo5SQDnXbFB22pVfSSv2Lo4viNVy924/z176uz21LU/FspnfqVKR4Cprl2eBslcNnb&#13;
-    Hv2CSfadPAdw4ncASgZLDaZlfywzZ20+zGF7IDN5opx+sBPhhv64hkmupO1Y</X509Certificate></X509Data></KeyInfo></Signature></Auth>
-      """;
+            <Auth ac="public" lk="MOSuHNHE9vz9h-6m0ZNAocEIWN4osP3PObgu183xWNxnyM3JGyBHw0U" rc="Y" sa="" tid="" txn="UKC:TX00002" uid="999941057058" ver="2.5">
+        <Uses bio="n" bt="" otp="y" pa="n" pfa="n" pi="n" pin="n"/>
+        <Device dc="" dpId="" mc="" mi="" rdsId="" rdsVer=""/>
+        <Skey ci="20250825">OlkdYz5kv8qGlrx2o33pGBOHSUdiF+ZLpB+ePNckTdkTT/b6pCPXcbbVNzImN1/sLT8i2ifhhHOgHCOQKYei1+fj/WNmAAYG5V0JStOlKjM+rpUciSuUNzLeQfJ4chgETG1a7MKJ+ZQS68AqxTwGTFWzuEsc1xZ9RO8sSQO1f4ejbdCnreiCLYMkwYbbILroINxrGZXVKvgDPP9CcTFA1iDx0LWNNPdSht2EA3EtzeP5EAiyI4E8C6G/KApO9r7VP2S74QRIIQ+kxLitcRVJ7cWQscRtS+XRsV6/YWRdYeEaGq/l9NIsx8293d6glHTdhKqNdKtPGMBX6E3ovgY7Rg==</Skey>
+        <Hmac>dBcUemVXN6aWGgZjtptKIq+uEv5RM0RHlJ8vwh8o63v6XQ/+VqoSgRc/jtxOxGKs</Hmac>
+        <Data type="X">MjAyNC0wOS0yM1QxNTo0NDo0ON8H6b4sqUw6G6W+N5+6r7ux2WFhEs6DnqHqq3jx/dvFUcqZ3WPtiSjNLi0B4CgDgISVvNDXkzFShJGXuxkizYQOBo4S8OxS9faTFpytKfPZshj8Ae3hjPWMIg1JWoqs02W0Q+n1P8uGClZk6oDf</Data>
+      <Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>uI8SURNm3Wyubrg7YUG3HC9CW7Bl3XS8mwzIT4HHHTw=</DigestValue></Reference></SignedInfo><SignatureValue>rSZJTBVJNEIsE+IrxKk5Tu+B5yDy6f4Bt6HI+19FDwlwJLeAiUcLmB6s2gU/Ngx1X63xFf7syyf7&#13;
+      /1HPiEfY67aimbz2BkV5mvPHz6Py6sCSwV+C2YMz3nlmdlog+PTDUsQ36FtUo9MUmvQr1SCrxzQ1&#13;
+      gfsu4KMrbvMiBYuDFYpl6VYDsd1DfTUYHgXhgf6IAzh6h91Nz1i/vlBjaW2eCfwEXXoT+jUe/joX&#13;
+      5ov2vhwzOFvCwMx2FnDbDi2iod9/cEACrHdjPZOuYFV2PPzMMYotQJdSAbDdSPQUZWtnfk2fGvjy&#13;
+      pa0+lZ28cPTwoGnCr9cNl9Zf1+ub2/+UAgwJzw==</SignatureValue><KeyInfo><X509Data><X509SubjectName>CN=Public AUA for Staging Services,OU=Staging Services,O=Public AUA,L=Bangalore,ST=KA,C=IN</X509SubjectName><X509Certificate>MIIDuTCCAqGgAwIBAgIHBFednVbC3DANBgkqhkiG9w0BAQUFADCBjTELMAkGA1UEBhMCSU4xCzAJ&#13;
+      BgNVBAgTAktBMRIwEAYDVQQHEwlCYW5nYWxvcmUxEzARBgNVBAoTClB1YmxpYyBBVUExGTAXBgNV&#13;
+      BAsTEFN0YWdpbmcgU2VydmljZXMxLTArBgNVBAMTJFJvb3QgUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
+      ZyBTZXJ2aWNlczAeFw0yNDA0MjkxMzI3MDZaFw0yODA0MjkxMzI3MDZaMIGIMQswCQYDVQQGEwJJ&#13;
+      TjELMAkGA1UECBMCS0ExEjAQBgNVBAcTCUJhbmdhbG9yZTETMBEGA1UEChMKUHVibGljIEFVQTEZ&#13;
+      MBcGA1UECxMQU3RhZ2luZyBTZXJ2aWNlczEoMCYGA1UEAxMfUHVibGljIEFVQSBmb3IgU3RhZ2lu&#13;
+      ZyBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALiYzM/HKKAWW+qZD7Ex&#13;
+      GEI4XFb+dT5bZElYBickVN5rj6g0p7psJDr6Ls//6v7f1SThdEDvwx0vavN6tzW+hdlBGmN7T6Nz&#13;
+      zqwkL5P6PJHwRY6on4n9edLB+Izn2a/qdlRB/gmV5cvH2eL2GqOsjhrGizj0Q+wsmNtnYwjKbtIN&#13;
+      LYSO7pUmePkSmkBk5eG8HjwmFcVmqkOoaCAEwz91iHsXLrSuh4CdmM8bWLMO5WNsdceLdml/6RLf&#13;
+      S4c0MwL1WgUU95LJuikeKz95p9HCq7GK0uZk2UhjtmyxoE9ccuidvcDHX9Xlb3uk1bScs4xEarwA&#13;
+      llT+vRI9BezfNwyk7s8CAwEAAaMhMB8wHQYDVR0OBBYEFD2MCJqrkkUJz4tnNLXn7Cl2hSAyMA0G&#13;
+      CSqGSIb3DQEBBQUAA4IBAQB7BlVIyhCf2A5IuN6PHtgBr7NOGYYFyQVwBoS9pmQaqTE1km5f2m+x&#13;
+      Fh7UD635NAXuUA0USXBYhN1NMgnE3q/Jhyfxq0Zx0Qq8WFQaBM8ka93r833t+jvLUrIlHlq5K4V7&#13;
+      UNyOnks+lyPGp2WwG1cI1NUgq5HInwy2sDJIFAAbTWiVXxzSnK0mA9jbATx8kcoudqbtkeYIKF3R&#13;
+      F1ngvb35LPSo5SQDnXbFB22pVfSSv2Lo4viNVy924/z176uz21LU/FspnfqVKR4Cprl2eBslcNnb&#13;
+      Hv2CSfadPAdw4ncASgZLDaZlfywzZ20+zGF7IDN5opx+sBPhhv64hkmupO1Y</X509Certificate></X509Data></KeyInfo></Signature></Auth>
+                              """;
 
   /*
    * The certificate for https://developer.uidai.gov.in
