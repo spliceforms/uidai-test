@@ -155,10 +155,14 @@ public class AuthClient {
 
     System.out.println("Skey: PSource " + pidTs);
 
-    Cipher pkCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-    var pSrc = new PSource.PSpecified(pidTs.getBytes());
-    var spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, pSrc);
-    pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey(), spec);
+    //Cipher pkCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
+Cipher pkCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+
+    //var pSrc = new PSource.PSpecified(pidTs.getBytes());
+   // var spec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, pSrc);
+   // pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey(), spec);
+
+   pkCipher.init(Cipher.ENCRYPT_MODE, uidaiCertificate.getPublicKey());
 
     byte[] encryptedSessionKey = pkCipher.doFinal(sessionKey);
 
