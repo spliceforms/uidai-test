@@ -62,6 +62,34 @@ To run
 java -cp bcprov-jdk18on-1.78.1.jar AuthClientBC.java public.p12 publicauaforstagingservices
 ```
 
+### NSDL
+
+1. OtpClientNsdl
+To compile 
+```
+javac OtpClientNsdl.java
+```
+
+To run
+```
+java OtpClientNsdl public.p12 publicauaforstagingservices 352116 578796332042
+```
+2. AuthClientNsdl
+To compile
+```
+javac AuthClientNsdl.java
+```
+To run
+java AuthClientNsdl public.p12 publicauaforstagingservices 825978
+
+3. KycClientNsdl
+To compile
+```
+javac KycClientNsdl.java
+```
+To run
+java KycClientNsdl public.p12 publicauaforstagingservices 300371 578796332042 kyc
+
 
 ### What you need to run
 
