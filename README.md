@@ -80,7 +80,9 @@ To compile
 javac AuthClientNsdl.java
 ```
 To run
+```
 java AuthClientNsdl public.p12 publicauaforstagingservices 825978
+```
 
 3. KycClientNsdl
 To compile
@@ -88,7 +90,28 @@ To compile
 javac KycClientNsdl.java
 ```
 To run
+```
 java KycClientNsdl public.p12 publicauaforstagingservices 300371 578796332042 kyc
+```
+
+## OtpClient With cloudHSM
+To compile
+```
+javac OtpClientHSM.java
+```
+To run
+```
+java OtpClientHSM
+```
+
+In order to run OtpClientHSM.java file, your machine(Windows or Linux) should satisfy below prerequisits
+    1. HSM driver installation on machine(We are using Windows 11 )
+    2. JDK installtion (we are using Java 17)
+    3. IP whitelisting should happend at HSM side(we are using up 45.58.32.151)
+    4. nFast service should be up(open cmd at ../nCipher/nFast/bin and do enquiry.exe)
+    5. .p12 or.pfx file and cert should be mapped at cloud HSM and  shoud have alias generated for same
+   
+
 
 
 ### What you need to run
