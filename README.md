@@ -94,6 +94,34 @@ To run
 java KycClientNsdl public.p12 publicauaforstagingservices 300371 578796332042 kyc
 ```
 
+### NPCI
+
+To run Npci kyc you need to copy .pfx file received from bank same folder
+
+1. OtpClientNpci
+   
+To compile 
+```
+javac OtpClientNpci.java
+```
+
+To Run 
+```
+java OtpClientNpci
+```
+
+2. KycClientNpci.java
+   
+To compile 
+```
+javac KycClientNpci.java
+```
+
+To Run first put otp received from OtpClientNpci into KycCleintNpci also add same txn id used in OtpClientNpci 
+```
+java KycClientNpci
+```
+
 ## OtpClient With cloudHSM
 To compile
 ```
